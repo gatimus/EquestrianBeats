@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="EQTheme" parent="@style/_EQTheme" />
+
+    <style name="_EQTheme" parent="android:Theme.Holo.Light">
+
+        <item name="android:actionBarStyle">@style/ActionBarEQTheme</item>
+
+        <item name="android:editTextBackground">@drawable/eqtheme_edit_text_holo_light</item>
+
+        <item name="android:textColorHighlight">#99440088</item>
+        <item name="android:textSelectHandleLeft">@drawable/eqtheme_text_select_handle_left</item>
+        <item name="android:textSelectHandleRight">@drawable/eqtheme_text_select_handle_right</item>
+        <item name="android:textSelectHandle">@drawable/eqtheme_text_select_handle_middle</item>
+
+        <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteTextViewEQTheme</item>
+
+        <item name="android:listChoiceIndicatorMultiple">@drawable/eqtheme_btn_check_holo_light
+        </item>
+
+        <item name="android:listChoiceIndicatorSingle">@drawable/eqtheme_btn_radio_holo_light</item>
+
+        <item name="android:buttonStyle">@style/ButtonEQTheme</item>
+
+        <item name="android:imageButtonStyle">@style/ImageButtonEQTheme</item>
+
+        <item name="android:dropDownSpinnerStyle">@style/SpinnerEQTheme</item>
+
+        <item name="android:progressBarStyleHorizontal">@style/ProgressBarEQTheme</item>
+
+        <item name="android:seekBarStyle">@style/SeekBarEQTheme</item>
+
+        <item name="android:ratingBarStyle">@style/RatingBarEQTheme</item>
+
+        <item name="android:ratingBarStyleIndicator">@style/RatingBarBigEQTheme</item>
+
+        <item name="android:ratingBarStyleSmall">@style/RatingBarSmallEQTheme</item>
+
+        <item name="android:buttonStyleToggle">@style/ToggleEQTheme</item>
+
+        <item name="android:listChoiceBackgroundIndicator">
+            @drawable/eqtheme_list_selector_holo_light
+        </item>
+
+        <item name="android:activatedBackgroundIndicator">
+            @drawable/eqtheme_activated_background_holo_light
+        </item>
+
+        <item name="android:fastScrollThumbDrawable">@drawable/eqtheme_fastscroll_thumb_holo</item>
+
+    </style>
+
+</resources>
