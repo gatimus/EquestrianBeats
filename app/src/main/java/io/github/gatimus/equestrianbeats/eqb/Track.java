@@ -12,7 +12,7 @@ public class Track {
     public String htmlDescription;
     //public JsonElement[] tags;
     public String license;
-    public String artist;
+    public User artist;
     public String link;
     public Map<String, String> download;
     public Map<String, String> stream;

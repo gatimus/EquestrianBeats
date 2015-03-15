@@ -2,23 +2,34 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.github.gatimus.equestrianbeats" >
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:logo="@drawable/logo"
+        android:icon="@drawable/icon"
         android:label="@string/app_name"
+        android:logo="@drawable/logo"
         android:theme="@style/EQTheme" >
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
+
+        </activity>
+
+        <activity
+            android:name=".UserActivity"
+            android:label="@string/title_activity_user"
+            android:parentActivityName=".MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="io.github.gatimus.equestrianbeats.MainActivity" />
         </activity>
+
     </application>
 
 </manifest>

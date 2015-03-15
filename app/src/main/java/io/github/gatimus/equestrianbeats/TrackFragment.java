@@ -2,6 +2,7 @@ package io.github.gatimus.equestrianbeats;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,10 +10,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-public class TrackFragment extends Fragment implements AbsListView.OnItemClickListener {
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import io.github.gatimus.equestrianbeats.eqb.EQBeats;
+import io.github.gatimus.equestrianbeats.eqb.Track;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
+public class TrackFragment extends Fragment implements AbsListView.OnItemClickListener, Callback<List<Track>> {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -34,7 +48,8 @@ public class TrackFragment extends Fragment implements AbsListView.OnItemClickLi
      * The Adapter which will be used to populate the ListView/GridView with
      * Views.
      */
-    private ListAdapter mAdapter;
+    private TrackAdapter mAdapter;
+    private List<Track> tracks;
 
     // TODO: Rename and change types of parameters
     public static TrackFragment newInstance(String param1, String param2) {
@@ -56,6 +71,7 @@ public class TrackFragment extends Fragment implements AbsListView.OnItemClickLi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EQBeats.getEQBInterface().getFeaturedTracks(this);
 
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -63,16 +79,18 @@ public class TrackFragment extends Fragment implements AbsListView.OnItemClickLi
         }
 
         // TODO: Change Adapter to display your content
-        //mAdapter = new ArrayAdapter<DummyContent.DummyItem>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, DummyContent.ITEMS);
+        tracks = new ArrayList<Track>();
+        mAdapter = new TrackAdapter(tracks);
+        mAdapter.setNotifyOnChange(true);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_track, container, false);
 
         // Set the adapter
         mListView = (AbsListView) view.findViewById(android.R.id.list);
+        mListView.setEmptyView(view.findViewById(android.R.id.empty));
         ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
 
         // Set OnItemClickListener so we can be notified on item clicks
@@ -120,6 +138,17 @@ public class TrackFragment extends Fragment implements AbsListView.OnItemClickLi
         }
     }
 
+    @Override
+    public void success(List<Track> tracks, Response response) {
+        this.tracks.addAll(tracks);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void failure(RetrofitError error) {
+        Log.e(getClass().getSimpleName(), error.toString());
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -133,6 +162,36 @@ public class TrackFragment extends Fragment implements AbsListView.OnItemClickLi
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(String id);
+    }
+
+    public class TrackAdapter extends ArrayAdapter<Track> {
+
+        public TrackAdapter(List<Track> objects) {
+            super(getActivity().getApplicationContext(), R.layout.track_list_item, objects);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            LayoutInflater inflater = (LayoutInflater) getActivity().getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View rowView = inflater.inflate(R.layout.track_list_item, parent, false);
+            TextView title = (TextView) rowView.findViewById(R.id.title);
+            TextView artist = (TextView) rowView.findViewById(R.id.artist);
+            ImageView art = (ImageView) rowView.findViewById(R.id.art);
+
+            title.setText(tracks.get(position).toString());
+            artist.setText(tracks.get(position).artist.toString());
+
+            if(tracks.get(position).download.containsKey("art")){
+                Picasso picasso = Picasso.with(getActivity().getApplicationContext());
+                if(BuildConfig.DEBUG) picasso.setIndicatorsEnabled(true);
+                picasso.load(tracks.get(position).download.get("art"))
+                        .resize(50,50)
+                        .into(art);
+            }
+
+            return rowView;
+        }
+
     }
 
 }

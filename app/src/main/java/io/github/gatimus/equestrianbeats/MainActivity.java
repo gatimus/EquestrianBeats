@@ -6,12 +6,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements TrackFragment.OnFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        TrackFragment trackFragment = TrackFragment.newInstance("asdf", "asdf");
+        getFragmentManager().beginTransaction().replace(R.id.fragment_container, trackFragment).commit();
     }
 
 
@@ -35,5 +37,10 @@ public class MainActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onFragmentInteraction(String id) {
+
     }
 }

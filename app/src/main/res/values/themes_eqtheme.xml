@@ -3,7 +3,11 @@
 <!-- Generated with http://android-holo-colors.com -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="EQTheme" parent="@style/_EQTheme" />
+    <style name="EQTheme" parent="@style/_EQTheme">
+        <item name="android:windowBackground">@color/background_color</item>
+        <item name="android:textColor">@color/eqtheme_color</item>
+        <item name="android:textColorPrimary">@color/eqtheme_color</item>
+    </style>
 
     <style name="_EQTheme" parent="android:Theme.Holo.Light">
 
