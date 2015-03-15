@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:background="@color/actionbar_color">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:text="title"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/eqtheme_color" />
+
+    <TextView
+        android:id="@+id/artist"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/title"
+        android:text="artist"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/eqtheme_color" />
+
+    <ImageView
+        android:id="@+id/art"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentRight="true" />
+
+    <ToggleButton
+        android:id="@+id/play_pause"
+        android:layout_width="20dp"
+        android:layout_height="22dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/btn_play_pause"
+        android:padding="5dp"
+        android:textOff=""
+        android:textOn="" />
+
+</RelativeLayout>
