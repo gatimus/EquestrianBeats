@@ -3,6 +3,7 @@ package io.github.gatimus.equestrianbeats;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.squareup.picasso.Picasso;
 
@@ -171,15 +173,25 @@ public class TrackFragment extends Fragment implements AbsListView.OnItemClickLi
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             LayoutInflater inflater = (LayoutInflater) getActivity().getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View rowView = inflater.inflate(R.layout.track_list_item, parent, false);
             TextView title = (TextView) rowView.findViewById(R.id.title);
             TextView artist = (TextView) rowView.findViewById(R.id.artist);
             ImageView art = (ImageView) rowView.findViewById(R.id.art);
+            ToggleButton playPause = (ToggleButton) rowView.findViewById(R.id.play_pause);
 
             title.setText(tracks.get(position).toString());
             artist.setText(tracks.get(position).artist.toString());
+            artist.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setClass(getActivity().getApplicationContext(), UserActivity.class);
+                    intent.putExtra(UserActivity.EXTRA_USER_ID, tracks.get(position).artist.id);
+                    startActivity(intent);
+                }
+            });
 
             if(tracks.get(position).download.containsKey("art")){
                 Picasso picasso = Picasso.with(getActivity().getApplicationContext());
@@ -188,6 +200,22 @@ public class TrackFragment extends Fragment implements AbsListView.OnItemClickLi
                         .resize(50,50)
                         .into(art);
             }
+            playPause.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // stop music
+                    Intent intent = new Intent(MusicService.ACTION_STOP);
+                    intent.setClass(getActivity().getApplicationContext(), MusicService.class);
+                    getActivity().startService(intent);
+                    if(((ToggleButton)v).isChecked()){
+                        // play music
+                        intent = new Intent(MusicService.ACTION_PLAY);
+                        intent.setClass(getActivity().getApplicationContext(), MusicService.class);
+                        intent.putExtra(MusicService.KEY_STREAM_URL, tracks.get(position).stream.get("mp3"));
+                        getActivity().startService(intent);
+                    }
+                }
+            });
 
             return rowView;
         }

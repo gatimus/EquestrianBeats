@@ -20,7 +20,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/name"
-        android:text="name"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/avatar"/>
@@ -31,13 +30,6 @@
         android:id="@+id/description"
         android:layout_below="@+id/avatar"/>
 
-    <ViewPager
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent">
-        <PagerTabStrip
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"/>
-    </ViewPager>
+
 
 </RelativeLayout>

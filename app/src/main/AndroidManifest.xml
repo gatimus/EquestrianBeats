@@ -3,6 +3,7 @@
     package="io.github.gatimus.equestrianbeats" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -10,26 +11,39 @@
         android:label="@string/app_name"
         android:logo="@drawable/logo"
         android:theme="@style/EQTheme" >
-
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
-
         <activity
             android:name=".UserActivity"
             android:label="@string/title_activity_user"
             android:parentActivityName=".MainActivity" >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.VIEW" />
+
+                <data
+                    android:host="eqbeats.org"
+                    android:scheme="https" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="io.github.gatimus.equestrianbeats.MainActivity" />
         </activity>
 
+        <service
+            android:name=".MusicService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
     </application>
 
 </manifest>

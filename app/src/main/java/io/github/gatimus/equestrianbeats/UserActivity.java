@@ -19,7 +19,7 @@ import retrofit.client.Response;
 
 public class UserActivity extends Activity implements Callback<User> {
 
-    public static final String USER_ID = "userID";
+    public static final String EXTRA_USER_ID = "io.github.gatimus.equestrianbeats.EXTRA_USER_ID";
 
     private int userID;
     private ActionBar actionBar;
@@ -30,7 +30,15 @@ public class UserActivity extends Activity implements Callback<User> {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) userID = savedInstanceState.getInt(USER_ID);
+        if (savedInstanceState != null) {
+            userID = savedInstanceState.getInt(EXTRA_USER_ID);
+        }
+        else if(getIntent().getData() != null) {
+            String uri = getIntent().getData().toString();
+            userID = Integer.parseInt(uri.substring(uri.lastIndexOf("/")+1));
+        } else {
+            userID = getIntent().getIntExtra(EXTRA_USER_ID,0);
+        }
 
         setContentView(R.layout.activity_user);
 
@@ -45,7 +53,7 @@ public class UserActivity extends Activity implements Callback<User> {
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putInt(USER_ID, userID);
+        savedInstanceState.putInt(EXTRA_USER_ID, userID);
     }
 
 
