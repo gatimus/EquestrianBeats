@@ -2,14 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.1.2"
-
+    buildToolsVersion '22.0.1'
     defaultConfig {
         applicationId "io.github.gatimus.equestrianbeats"
-        minSdkVersion 16
-        targetSdkVersion 21
-        versionCode 1
-        versionName "Applejack"
+        minSdkVersion 21
+        targetSdkVersion 22
+        versionName 'Berry Punch'
+        versionCode 2
     }
     buildTypes {
         release {
@@ -17,11 +16,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    productFlavors {
+    }
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.android.support:appcompat-v7:22.0.0'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.squareup.okhttp:okhttp:2.2.0'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
