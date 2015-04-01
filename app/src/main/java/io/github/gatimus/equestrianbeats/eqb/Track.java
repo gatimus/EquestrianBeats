@@ -1,5 +1,7 @@
 package io.github.gatimus.equestrianbeats.eqb;
 
+import android.net.Uri;
+
 import com.google.gson.annotations.SerializedName;
 import java.util.Map;
 
@@ -13,9 +15,9 @@ public class Track {
     //public JsonElement[] tags;
     public String license;
     public User artist;
-    public String link;
-    public Map<String, String> download;
-    public Map<String, String> stream;
+    public Uri link;
+    public Map<String, Uri> download;
+    public Map<String, Uri> stream;
     public Stats stats;
     public float timestamp;
 
@@ -23,15 +25,9 @@ public class Track {
 
         public Totals totals;
         @SerializedName("unique_totals")
-        public UniqueTotals uniqueTotals;
+        public Totals uniqueTotals;
 
         public class Totals {
-            public int trackView;
-            public int trackPlay;
-            public int trackDownload;
-        }
-
-        public class UniqueTotals {
             public int trackView;
             public int trackPlay;
             public int trackDownload;

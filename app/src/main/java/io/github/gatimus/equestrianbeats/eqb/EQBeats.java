@@ -1,10 +1,16 @@
 package io.github.gatimus.equestrianbeats.eqb;
 
+import android.net.Uri;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.util.List;
 
 import io.github.gatimus.equestrianbeats.BuildConfig;
 import retrofit.Callback;
 import retrofit.RestAdapter;
+import retrofit.converter.GsonConverter;
 import retrofit.http.GET;
 import retrofit.http.Path;
 import retrofit.http.Query;
@@ -48,8 +54,15 @@ public class EQBeats {
     }
 
     public static EQBInterface getEQBInterface(){
+
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Uri.class, new UriDeserializer())
+                .create();
+
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint("https://eqbeats.org")
+                .setConverter(new GsonConverter(gson))
+                .setLogLevel(RestAdapter.LogLevel.NONE)
                 .build();
 
         if(BuildConfig.DEBUG)

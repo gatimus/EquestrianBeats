@@ -1,5 +1,7 @@
 package io.github.gatimus.equestrianbeats.eqb;
 
+import android.net.Uri;
+
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
@@ -17,7 +19,7 @@ public class User {
     public int numFavorites;
     @SerializedName("num_followers")
     public int numFollowers;
-    public String link;
+    public Uri link;
 
     @Override
     public String toString(){

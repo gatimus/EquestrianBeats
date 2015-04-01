@@ -1,5 +1,7 @@
 package io.github.gatimus.equestrianbeats.eqb;
 
+import android.net.Uri;
+
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
@@ -14,7 +16,7 @@ public class Playlist {
     public String htmlDescription;
     public User author;
     public List<Track> tracks;
-    public String link;
+    public Uri link;
 
     @Override
     public String toString(){

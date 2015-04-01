@@ -211,7 +211,7 @@ public class TrackFragment extends Fragment implements AbsListView.OnItemClickLi
                         // play music
                         intent = new Intent(MusicService.ACTION_PLAY);
                         intent.setClass(getActivity().getApplicationContext(), MusicService.class);
-                        intent.putExtra(MusicService.KEY_STREAM_URL, tracks.get(position).stream.get("mp3"));
+                        intent.putExtra(MusicService.KEY_STREAM_URL, tracks.get(position).stream.get("mp3").toString());
                         getActivity().startService(intent);
                     }
                 }

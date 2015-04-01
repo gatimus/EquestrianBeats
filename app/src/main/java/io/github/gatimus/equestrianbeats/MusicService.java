@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaDescription;
-import android.media.MediaMetadata;
 import android.media.MediaPlayer;
 import android.media.browse.MediaBrowser;
+import android.media.session.MediaSession;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -40,9 +40,18 @@ public class MusicService extends MediaBrowserService implements MediaPlayer.OnP
 
     private MediaPlayer player;
     private WifiManager.WifiLock wifiLock;
+    private MediaSession mSession;
 
-    public MusicService() {
-        //empty
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mSession = new MediaSession(this, getClass().getSimpleName());
+        setSessionToken(mSession.getSessionToken());
+        mSession.setCallback(new MediaSessionCallback());
+    }
+
+    private final class MediaSessionCallback extends MediaSession.Callback{
+
     }
 
     @Override
@@ -70,87 +79,15 @@ public class MusicService extends MediaBrowserService implements MediaPlayer.OnP
                 result.sendResult(mediaItems);
                 break;
             case MEDIA_ID_FEATURED :
-                EQBeats.getEQBInterface().getFeaturedTracks(new Callback<List<Track>>() {
-                    @Override
-                    public void success(List<Track> tracks, Response response) {
-                        List<MediaBrowser.MediaItem> mediaItems = new ArrayList<MediaBrowser.MediaItem>();
-                        for(Track track : tracks){
-                            MediaMetadata mediaMetadata = new MediaMetadata.Builder()
-                                    .putString(MediaMetadata.METADATA_KEY_MEDIA_ID, String.valueOf(track.id))
-                                    .putString(MediaMetadata.METADATA_KEY_TITLE, track.title)
-                                    .putString(MediaMetadata.METADATA_KEY_DISPLAY_TITLE, track.title)
-                                    .putString(MediaMetadata.METADATA_KEY_ARTIST, track.artist.name)
-                                    .putString(MediaMetadata.METADATA_KEY_DISPLAY_SUBTITLE, track.artist.name)
-                                    .putString(MediaMetadata.METADATA_KEY_DISPLAY_DESCRIPTION, track.description)
-                                    .putString(MediaMetadata.METADATA_KEY_ART_URI, track.download.get("art"))
-                                    .putString(MediaMetadata.METADATA_KEY_ALBUM_ART_URI, track.download.get("art"))
-                                    .putString(MediaMetadata.METADATA_KEY_DISPLAY_ICON_URI, track.download.get("art"))
-                                    .build();
-                        }
-                        result.sendResult(mediaItems);
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-                        Log.e(getClass().getSimpleName(), error.toString());
-                    }
-                });
+                EQBeats.getEQBInterface().getFeaturedTracks(new TrackCallback(result));
                 result.detach();
                 break;
             case MEDIA_ID_LATEST :
-                EQBeats.getEQBInterface().getLatestTracks(new Callback<List<Track>>() {
-                    @Override
-                    public void success(List<Track> tracks, Response response) {
-                        List<MediaBrowser.MediaItem> mediaItems = new ArrayList<MediaBrowser.MediaItem>();
-                        for(Track track : tracks){
-                            MediaMetadata mediaMetadata = new MediaMetadata.Builder()
-                                    .putString(MediaMetadata.METADATA_KEY_MEDIA_ID, String.valueOf(track.id))
-                                    .putString(MediaMetadata.METADATA_KEY_TITLE, track.title)
-                                    .putString(MediaMetadata.METADATA_KEY_DISPLAY_TITLE, track.title)
-                                    .putString(MediaMetadata.METADATA_KEY_ARTIST, track.artist.name)
-                                    .putString(MediaMetadata.METADATA_KEY_DISPLAY_SUBTITLE, track.artist.name)
-                                    .putString(MediaMetadata.METADATA_KEY_DISPLAY_DESCRIPTION, track.description)
-                                    .putString(MediaMetadata.METADATA_KEY_ART_URI, track.download.get("art"))
-                                    .putString(MediaMetadata.METADATA_KEY_ALBUM_ART_URI, track.download.get("art"))
-                                    .putString(MediaMetadata.METADATA_KEY_DISPLAY_ICON_URI, track.download.get("art"))
-                                    .build();
-                        }
-                        result.sendResult(mediaItems);
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-                        Log.e(getClass().getSimpleName(), error.toString());
-                    }
-                });
+                EQBeats.getEQBInterface().getLatestTracks(new TrackCallback(result));
                 result.detach();
                 break;
             case MEDIA_ID_RANDOM :
-                EQBeats.getEQBInterface().getRandomTracks(new Callback<List<Track>>() {
-                    @Override
-                    public void success(List<Track> tracks, Response response) {
-                        List<MediaBrowser.MediaItem> mediaItems = new ArrayList<MediaBrowser.MediaItem>();
-                        for(Track track : tracks){
-                            MediaMetadata mediaMetadata = new MediaMetadata.Builder()
-                                    .putString(MediaMetadata.METADATA_KEY_MEDIA_ID, String.valueOf(track.id))
-                                    .putString(MediaMetadata.METADATA_KEY_TITLE, track.title)
-                                    .putString(MediaMetadata.METADATA_KEY_DISPLAY_TITLE, track.title)
-                                    .putString(MediaMetadata.METADATA_KEY_ARTIST, track.artist.name)
-                                    .putString(MediaMetadata.METADATA_KEY_DISPLAY_SUBTITLE, track.artist.name)
-                                    .putString(MediaMetadata.METADATA_KEY_DISPLAY_DESCRIPTION, track.description)
-                                    .putString(MediaMetadata.METADATA_KEY_ART_URI, track.download.get("art"))
-                                    .putString(MediaMetadata.METADATA_KEY_ALBUM_ART_URI, track.download.get("art"))
-                                    .putString(MediaMetadata.METADATA_KEY_DISPLAY_ICON_URI, track.download.get("art"))
-                                    .build();
-                        }
-                        result.sendResult(mediaItems);
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-                        Log.e(getClass().getSimpleName(), error.toString());
-                    }
-                });
+                EQBeats.getEQBInterface().getRandomTracks(new TrackCallback(result));
                 result.detach();
                 break;
             default:
@@ -169,26 +106,29 @@ public class MusicService extends MediaBrowserService implements MediaPlayer.OnP
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        switch(intent.getAction()) {
-            case ACTION_PLAY:
-                if(player != null) {
-                    if(player.isPlaying()) break;
-                    player.start();
+        if(intent != null){
+            switch(intent.getAction()) {
+                case ACTION_PLAY:
+                    if(player != null) {
+                        if(player.isPlaying()) break;
+                        player.start();
+                        break;
+                    }
+                    if(intent.hasExtra(KEY_STREAM_URL)) {
+                        playRemoteResource(intent.getStringExtra(KEY_STREAM_URL));
+                    }
                     break;
-                }
-                if(intent.hasExtra(KEY_STREAM_URL)) {
-                    playRemoteResource(intent.getStringExtra(KEY_STREAM_URL));
-                }
-                break;
-            case ACTION_PAUSE:
-                if(player != null && player.isPlaying())
-                    player.pause();
-                break;
-            case ACTION_STOP:
-                if(player != null && player.isPlaying())
-                    stopPlayback();
-                break;
+                case ACTION_PAUSE:
+                    if(player != null && player.isPlaying())
+                        player.pause();
+                    break;
+                case ACTION_STOP:
+                    if(player != null && player.isPlaying())
+                        stopPlayback();
+                    break;
+            }
         }
+
 
         return START_STICKY;
     }
@@ -274,6 +214,49 @@ public class MusicService extends MediaBrowserService implements MediaPlayer.OnP
 
         wifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
                 .createWifiLock(WifiManager.WIFI_MODE_FULL, "musicservice");
+    }
+
+    private class TrackCallback implements Callback<List<Track>> {
+
+        private Result<List<MediaBrowser.MediaItem>> result;
+
+        public TrackCallback(Result<List<MediaBrowser.MediaItem>> result){
+            this.result = result;
+        }
+
+        @Override
+        public void success(List<Track> tracks, Response response) {
+            List<MediaBrowser.MediaItem> mediaItems = new ArrayList<MediaBrowser.MediaItem>();
+            for(Track track : tracks){
+                mediaItems.add(new MediaBrowser.MediaItem(new MediaDescription.Builder()
+                        .setMediaId(String.valueOf(track.id))
+                        .setTitle(track.title)
+                        .setSubtitle(track.artist.name)
+                        .setIconUri(track.download.get("art"))
+                        .build(), MediaBrowser.MediaItem.FLAG_PLAYABLE));
+                /*
+                MediaMetadata mediaMetadata = new MediaMetadata.Builder()
+                        .putString(MediaMetadata.METADATA_KEY_MEDIA_ID, String.valueOf(track.id))
+                        .putString(MediaMetadata.METADATA_KEY_TITLE, track.title)
+                        .putString(MediaMetadata.METADATA_KEY_DISPLAY_TITLE, track.title)
+                        .putString(MediaMetadata.METADATA_KEY_ARTIST, track.artist.name)
+                        .putString(MediaMetadata.METADATA_KEY_DISPLAY_SUBTITLE, track.artist.name)
+                        .putString(MediaMetadata.METADATA_KEY_DISPLAY_DESCRIPTION, track.description)
+                        .putString(MediaMetadata.METADATA_KEY_ART_URI, track.download.get("art"))
+                        .putString(MediaMetadata.METADATA_KEY_ALBUM_ART_URI, track.download.get("art"))
+                        .putString(MediaMetadata.METADATA_KEY_DISPLAY_ICON_URI, track.download.get("art"))
+                        .build();
+                mediaItems.add(new MediaBrowser.MediaItem(mediaMetadata.getDescription(), MediaBrowser.MediaItem.FLAG_PLAYABLE));
+                */
+            }
+            result.sendResult(mediaItems);
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            Log.e(getClass().getSimpleName(), error.toString());
+            result.sendResult(new ArrayList<MediaBrowser.MediaItem>());
+        }
     }
 }
 
